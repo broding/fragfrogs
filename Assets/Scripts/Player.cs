@@ -5,13 +5,14 @@ public class Player : MonoBehaviour {
 
     enum Direction { LEFT, RIGHT, UP, DOWN }
 
-    public float MoveSpeed = 0.32f;
+	public float MoveSpeed;
 
     private Vector3 _acceleration;
     private Vector3 _velocity;
 
     private bool _moving;
     private Vector3 _target;
+	private Vector3 _previousPosition;
     private float _time;
     private Vector3 _startPosition;
 
@@ -65,6 +66,7 @@ public class Player : MonoBehaviour {
     private void setTarget(Direction direction)
     {
         Vector3 position = transform.localPosition;
+		_previousPosition = position;
 
         switch (direction)
         {
@@ -87,6 +89,9 @@ public class Player : MonoBehaviour {
     {
         if (other.gameObject.tag == "Bush")
         {
+			_target = _previousPosition;
+			_startPosition = transform.localPosition;
+			_time = MoveSpeed / 3;
             other.gameObject.GetComponent<Bush>().Eat();
         }
 
