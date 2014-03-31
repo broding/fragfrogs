@@ -60,7 +60,6 @@ public class Player : MonoBehaviour {
         }
         else if (State == PlayerState.TONGUE)
         {
-            Debug.Log("tongue");
             rigidbody2D.velocity = new Vector2(0, 0);
 
             if (!_tongue.IsBusy)

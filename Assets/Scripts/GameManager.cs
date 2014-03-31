@@ -30,7 +30,6 @@ public class GameManager : MonoBehaviour {
 
         GameObject player = GameObject.Instantiate(playerPrefab) as GameObject;
         player.transform.localPosition = new Vector3(10 * TILE_SIZE, 10 * TILE_SIZE );
-        player.transform.parent = bushes.transform;
 
         // position camera in the middle
         Camera.main.transform.localPosition = new Vector3(((_width * TILE_SIZE) / 2), (_height * TILE_SIZE) / 2, Camera.main.transform.localPosition.z); 

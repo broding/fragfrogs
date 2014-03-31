@@ -24,13 +24,12 @@ public class Tongue : MonoBehaviour {
 	public void Update () {
 
         if(Retreating)
-            _length -= Speed;
+            _length -= Speed * 1.7f;
         else
             _length += Speed;
 
         if (_length < 0)
         {
-            Debug.Log("lenght < 0");
             Deactivate();
             return;
         }
@@ -56,7 +55,6 @@ public class Tongue : MonoBehaviour {
 
     private void Active()
     {
-        Debug.Log("Activate");
         Retreating = false;
         gameObject.SetActive(true);
         IsBusy = true;
@@ -65,7 +63,6 @@ public class Tongue : MonoBehaviour {
 
     private void Deactivate()
     {
-        Debug.Log("Deactivate");
         Retreating = false;
         gameObject.SetActive(false);
         IsBusy = false;
