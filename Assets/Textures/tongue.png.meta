@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d85399f121a5c4a09a5b5dd72956c220
+guid: 2a27a45aeb7326c439cb4bfca85b9631
 TextureImporter:
   serializedVersion: 2
   mipmaps:
@@ -30,7 +30,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -44,6 +44,24 @@ TextureImporter:
     textureFormat: -2
     compressionQuality: 50
   spriteSheet:
-    sprites: []
+    sprites:
+    - name: tongue_end
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2
+        width: 90
+        height: 46
+      alignment: 0
+      pivot: {x: .5, y: .5}
+    - name: tongue_body
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 90
+        height: 1
+      alignment: 0
+      pivot: {x: .5, y: .5}
   spritePackingTag: 
   userData: 
