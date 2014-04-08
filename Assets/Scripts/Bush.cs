@@ -5,7 +5,7 @@ public class Bush : MonoBehaviour {
 
 	public int RegenTime = 10;
 
-	private BoxCollider2D _collider;
+	private CircleCollider2D _collider;
 	private float _timer;
 	private float _randomRegenTime;
 	private int _state;
@@ -14,7 +14,7 @@ public class Bush : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		_collider = GetComponent<BoxCollider2D>();
+        _collider = GetComponent<CircleCollider2D>();
 		_randomRegenTime = Random.Range(0,1) * 1.5f + 8.0f; 
 		_timer = 0; 
 		_state = 3; 

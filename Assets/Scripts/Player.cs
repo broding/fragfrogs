@@ -3,97 +3,84 @@ using System.Collections;
 
 public class Player : MonoBehaviour {
 
-    enum Direction { LEFT, RIGHT, UP, DOWN }
+    public enum PlayerState { TONGUE, STUNNED, IDLE }
 
 	public float MoveSpeed;
+    public float MaxSpeed;
+    public Direction Direction { get; private set; }
+    public PlayerState State { get; private set; }
 
-    private Vector3 _acceleration;
-    private Vector3 _velocity;
+    private Tongue _tongue;
 
-    private bool _moving;
-    private Vector3 _target;
-	private Vector3 _previousPosition;
-    private float _time;
-    private Vector3 _startPosition;
+    private float _stunnedForSeconds;
 
 	// Use this for initialization
 	void Start () {
-	
+        State = PlayerState.IDLE;
+        _tongue = transform.FindChild("Tongue").GetComponent<Tongue>();
+        _tongue.gameObject.SetActive(false);
 	}
-	
-	// Update is called once per frame
-	void Update () {
-        if (_moving)
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            _time += Time.deltaTime;
-            transform.localPosition = Move(_time, MoveSpeed, _startPosition, _target - _startPosition);
-
-            if (_time > MoveSpeed)
-                _moving = false;
-
+            if (_tongue.IsBusy)
+            {
+                _tongue.Retreat();
+            }
+            else
+            {
+                State = PlayerState.TONGUE;
+                _tongue.Fire();
+            }
         }
-        else // find target
+
+        if (State == PlayerState.IDLE)
         {
             float horizontal = Input.GetAxis("Horizontal");
             float vertical = Input.GetAxis("Vertical");
 
+            rigidbody2D.velocity = new Vector2(horizontal * MoveSpeed, vertical * MoveSpeed);
+
             if (horizontal != 0 || vertical != 0)
             {
-                if (Mathf.Abs(horizontal) > Mathf.Abs(vertical))
-                    setTarget(horizontal > 0 ? Direction.LEFT : Direction.RIGHT);
-                else
-                    setTarget(vertical > 0 ? Direction.UP : Direction.DOWN);
-
-                _moving = true;
-                _time = 0;
-                _startPosition = transform.localPosition;
+                Direction = Mathf.Abs(horizontal) > Mathf.Abs(vertical) ? (horizontal > 0 ? Direction.LEFT : Direction.RIGHT) : (vertical > 0 ? Direction.UP : Direction.DOWN);
+                _tongue.transform.rotation = Quaternion.Euler(new Vector3(0, 0, Util.GetAngleFromDirection(Direction)));
             }
-
-            
         }
-
-        transform.position += _velocity * Time.deltaTime;
-	}
-
-    private Vector3 Move(float t, float d, Vector3 b, Vector3 c)
-    {
-        t /= d / 2;
-        if (t < 1) return c / 2 * t * t + b;
-        t--;
-        return -c / 2 * (t * (t - 2) - 1) + b;
-    }
-
-    private void setTarget(Direction direction)
-    {
-        Vector3 position = transform.localPosition;
-		_previousPosition = position;
-
-        switch (direction)
+        else if (State == PlayerState.STUNNED)
         {
-            case Direction.UP:
-                _target = position - new Vector3(0, -GameManager.TILE_SIZE);
-                break;
-            case Direction.DOWN:
-                _target = position - new Vector3(0, GameManager.TILE_SIZE);
-                break;
-            case Direction.LEFT:
-                _target = position - new Vector3(-GameManager.TILE_SIZE, 0);
-                break;
-            case Direction.RIGHT:
-                _target = position - new Vector3(GameManager.TILE_SIZE, 0);
-                break;
+            _stunnedForSeconds -= Time.fixedDeltaTime;
+
+            if (_stunnedForSeconds < 0)
+            {
+                State = PlayerState.IDLE;
+            }
         }
+        else if (State == PlayerState.TONGUE)
+        {
+            rigidbody2D.velocity = new Vector2(0, 0);
+
+            if (!_tongue.IsBusy)
+                State = PlayerState.IDLE;
+        }
+
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.tag == "Bush")
         {
-			_target = _previousPosition;
-			_startPosition = transform.localPosition;
-			_time = MoveSpeed / 3;
+            rigidbody2D.AddForce((transform.position - other.transform.position).normalized * 120);
+            Stun(0.11f);
             other.gameObject.GetComponent<Bush>().Eat();
         }
+    }
 
+    public void Stun(float seconds)
+    {
+        State = PlayerState.STUNNED;
+        _stunnedForSeconds = seconds;
     }
 }
